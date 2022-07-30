@@ -14,11 +14,8 @@ async def login(data: OAuth2PasswordRequestForm = Depends()):
     password = data.password
 
     user = await crud.get_user_by_username(username)
-    if not user:
+    if not user or password != user.password:
         raise InvalidCredentialsException
-    elif password != user.password:
-        raise InvalidCredentialsException
-
     access_token = login_manager.create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
 
